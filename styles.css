@@ -15,7 +15,7 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Nunito', sans-serif;
 
     background-color: var(--red);
     color: white;
@@ -46,7 +46,13 @@ a {
 .hr {
     width: 100%;
 
+    margin: 0;
+
     border-bottom: 2px solid white;
+}
+
+.hidden {
+    display: none;
 }
 
 /* NAV AND ULS */
@@ -108,6 +114,8 @@ ul {
 /* TIMER CONTAINER */
 
 #timerContainer {
+    position: relative;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -125,7 +133,7 @@ ul {
     margin-top: 20px;
 }
 
-.timerButton {
+#timerButton {
     width: 200px;
     height: 55px;
 
@@ -144,6 +152,20 @@ ul {
     box-shadow: rgb(235 235 235) 0px 6px 0px;
 
     cursor: pointer;
+}
+
+.skipTimerButton {
+    position: absolute;
+    right: 80px;
+    bottom: 32px;
+
+    background: none;
+    border: none;
+}
+
+.skipTimerButton > img {
+    width: 22px;
+    height: 22px;
 }
 
 /* TASKS CONTAINER */
@@ -166,16 +188,22 @@ ul {
 
     display: flex;
     justify-content: space-between;
+    align-items: center;
+
+    font-weight: bold;
 }
 
 #menuButton {
     display: flex;
     align-items: center;
+    justify-content: center;
 
     background: var(--lightred);
 
     border: none;
+    border-radius: 4px;
 
+    padding: 0.5rem;
     cursor: pointer;
 }
 
