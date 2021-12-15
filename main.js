@@ -1,6 +1,12 @@
 const timer = {
     getTime() {
         let formattedTime
+
+        if (App.time === 0) {
+            timer.resetTimer()
+            return
+        }
+
         App.time -= 1000
 
         // Math
@@ -19,7 +25,7 @@ const timer = {
     },
 
     startTimer() {
-        DOM.buttonAudio.play()
+        App.buttonAudio.play()
 
         this.timerInterval = setInterval(this.getTime, 1000)
         DOM.timerButton.textContent = 'STOP'
@@ -32,7 +38,7 @@ const timer = {
     },
 
     stopTimer() {
-        DOM.buttonAudio.play()
+        App.buttonAudio.play()
 
         clearInterval(this.timerInterval)
         DOM.timerButton.textContent = 'START'
@@ -42,25 +48,61 @@ const timer = {
         DOM.skipTimerButton.style.opacity = '0'
         DOM.timerButton.style.transform = 'translateY(-6px)'
         DOM.timerButton.style.boxShadow = 'rgb(235 235 235) 0px 6px 0px'
+    },
+
+    resetTimer() {
+        App.alarmClockAudio.play()
+
+        timerOptions.setCurrentTab('Pomodoro')
+        App.currentTab()
+
+        App.counter += 1
+        App.update()
+    },
+
+    skipTimer() {
+        this.stopTimer()
+
+        if (
+            confirm(
+                'Are you sure you want to finish the round early? (The remaining time will not be counted in the report.)'
+            )
+        ) {
+            if (App.currentTab.name == 'Pomodoro') {
+                App.counter += 1
+                timerOptions.shortBreak()
+                App.update('05:00')
+            } else {
+                timerOptions.Pomodoro()
+                App.update('25:00')
+            }
+            return
+        }
+
+        this.startTimer()
     }
 }
 
 const timerOptions = {
+    // Lembrar de tirar essa função lixo
     setCurrentTab(tab) {
         switch (true) {
             case tab === 'Pomodoro':
+                App.currentTab = this.Pomodoro
                 DOM.pomoOptions[0].classList.add('Pomodoro')
                 DOM.pomoOptions[1].classList.remove('shortBreak')
                 DOM.pomoOptions[2].classList.remove('longBreak')
                 break
 
             case tab === 'shortBreak':
+                App.currentTab = this.shortBreak
                 DOM.pomoOptions[0].classList.remove('Pomodoro')
                 DOM.pomoOptions[1].classList.add('shortBreak')
                 DOM.pomoOptions[2].classList.remove('longBreak')
                 break
 
             case tab === 'longBreak':
+                App.currentTab = this.longBreak
                 DOM.pomoOptions[0].classList.remove('Pomodoro')
                 DOM.pomoOptions[1].classList.remove('shortBreak')
                 DOM.pomoOptions[2].classList.add('longBreak')
@@ -70,12 +112,12 @@ const timerOptions = {
     },
 
     Pomodoro() {
+        timer.stopTimer()
+
         App.time = 1000 * 25 * 60
         DOM.timerDiv.textContent = '25:00'
 
         this.setCurrentTab('Pomodoro')
-
-        timer.stopTimer()
 
         document.body.style.backgroundColor = '#e05454'
 
@@ -97,6 +139,8 @@ const timerOptions = {
         menuButton.style.backgroundColor = '#e06464'
 
         addTaskButton.style.backgroundColor = '#c84c4c'
+
+        timeToSomething.textContent = 'Time to focus!'
     },
 
     shortBreak() {
@@ -176,18 +220,24 @@ const DOM = {
 
     timerDiv: document.querySelector('#timer'),
     timerButton: document.querySelector('#timerButton'),
-    skipTimerButton: document.querySelector('.skipTimerButton'),
-    buttonAudio: new Audio('./assets/clickMinecraft.mp3')
+    skipTimerButton: document.querySelector('.skipTimerButton')
 }
 
 const App = {
     init() {
         this.time = 1000 * 60 * 25
+        this.counter = 1
+        this.currentTab = timerOptions.Pomodoro
+
         DOM.timerButton.onclick = () => timer.startTimer()
+
+        this.alarmClockAudio = new Audio('./assets/alarm_clock.mp3')
+        this.buttonAudio = new Audio('./assets/clickMinecraft.mp3')
     },
 
     update(currentTime) {
         DOM.timerDiv.textContent = currentTime
+        counter.textContent = `#${this.counter}`
     }
 }
 

@@ -52,6 +52,10 @@ a {
     border-bottom: 2px solid white;
 }
 
+.hidden {
+    display: none;
+}
+
 /* NAV AND ULS */
 
 nav {
@@ -119,6 +123,7 @@ ul {
 
     font-weight: bold;
 }
+
 /* TIMER CONTAINER */
 
 #timerContainer {
