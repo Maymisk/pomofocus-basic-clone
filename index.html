@@ -66,19 +66,31 @@
                 </ul>
             </nav>
 
-            <div class="hr red"></div>
+            <div class="hr"></div>
 
             <section id="timerContainer">
                 <div id="options">
                     <ul>
-                        <li class="activeOption"><a href="#">Pomodoro</a></li>
-                        <li><a href="#">Short Break</a></li>
-                        <li><a href="#">Long Break</a></li>
+                        <li class="Pomodoro">
+                            <a href="#" onclick="timerOptions.Pomodoro()"
+                                >Pomodoro</a
+                            >
+                        </li>
+                        <li>
+                            <a href="#" onclick="timerOptions.shortBreak()"
+                                >Short Break</a
+                            >
+                        </li>
+                        <li>
+                            <a href="#" onclick="timerOptions.longBreak()"
+                                >Long Break</a
+                            >
+                        </li>
                     </ul>
                 </div>
                 <div id="timer">25:00</div>
                 <button id="timerButton">START</button>
-                <button class="skipTimerButton hidden">
+                <button class="skipTimerButton">
                     <img
                         src="./assets/next-white3.png"
                         alt="skip Timer Button"

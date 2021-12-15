@@ -9,9 +9,10 @@
     --red: #e05454;
     --lightred: #e06464;
     --darkred: #c84c4c;
-    --greenishblue: #4c9195;
-    --blue: #457ca3;
-    --darkblue: #407494;
+
+    --shortdarkblue: #458488;
+
+    --longdarkblue: #407494;
 }
 
 body {
@@ -49,10 +50,6 @@ a {
     margin: 0;
 
     border-bottom: 2px solid white;
-}
-
-.hidden {
-    display: none;
 }
 
 /* NAV AND ULS */
@@ -101,16 +98,27 @@ ul {
     border-radius: 4px;
 }
 
-.hr.red {
+.hr {
     border-bottom: 2px solid var(--darkred);
 }
 
-.activeOption {
+.Pomodoro {
     background-color: var(--darkred);
 
     font-weight: bold;
 }
 
+.shortBreak {
+    background-color: var(--shortdarkblue);
+
+    font-weight: bold;
+}
+
+.longBreak {
+    background-color: var(--longdarkblue);
+
+    font-weight: bold;
+}
 /* TIMER CONTAINER */
 
 #timerContainer {
@@ -161,11 +169,18 @@ ul {
 
     background: none;
     border: none;
+
+    cursor: pointer;
+    transition: all 0.2s ease-in;
 }
 
 .skipTimerButton > img {
     width: 22px;
     height: 22px;
+
+    opacity: inherit;
+
+    transition: all 0.2s ease-in;
 }
 
 /* TASKS CONTAINER */
