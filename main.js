@@ -24,8 +24,7 @@ const timer = {
         this.timerInterval = setInterval(this.getTime, 1000)
         DOM.timerButton.textContent = 'STOP'
 
-        DOM.removeStartEvent(DOM.timerButton)
-        DOM.addStopEvent(DOM.timerButton)
+        DOM.timerButton.onclick = () => this.stopTimer()
 
         DOM.skipTimerButton.style.opacity = '1'
         DOM.timerButton.style.transform = 'translateY(6px)'
@@ -38,8 +37,7 @@ const timer = {
         clearInterval(this.timerInterval)
         DOM.timerButton.textContent = 'START'
 
-        DOM.removeStopEvent(DOM.timerButton)
-        DOM.addStartEvent(DOM.timerButton)
+        DOM.timerButton.onclick = () => this.startTimer()
 
         DOM.skipTimerButton.style.opacity = '0'
         DOM.timerButton.style.transform = 'translateY(-6px)'
@@ -138,6 +136,7 @@ const timerOptions = {
     longBreak() {
         DOM.timerDiv.textContent = '15:00'
         App.time = 1000 * 60 * 15
+
         this.setCurrentTab('longBreak')
 
         timer.stopTimer()
@@ -178,34 +177,13 @@ const DOM = {
     timerDiv: document.querySelector('#timer'),
     timerButton: document.querySelector('#timerButton'),
     skipTimerButton: document.querySelector('.skipTimerButton'),
-    buttonAudio: new Audio('./assets/clickMinecraft.mp3'),
-
-    addStartEvent(element) {
-        // this.start is necessary due to event listeners' properties
-
-        element.addEventListener(
-            'click',
-            (this.start = () => timer.startTimer())
-        )
-    },
-
-    addStopEvent(element) {
-        element.addEventListener('click', (this.stop = () => timer.stopTimer()))
-    },
-
-    removeStartEvent(element) {
-        element.removeEventListener('click', this.start)
-    },
-
-    removeStopEvent(element) {
-        element.removeEventListener('click', this.stop)
-    }
+    buttonAudio: new Audio('./assets/clickMinecraft.mp3')
 }
 
 const App = {
     init() {
         this.time = 1000 * 60 * 25
-        DOM.addStartEvent(DOM.timerButton)
+        DOM.timerButton.onclick = () => timer.startTimer()
     },
 
     update(currentTime) {
