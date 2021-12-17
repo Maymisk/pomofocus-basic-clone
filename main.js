@@ -1,9 +1,89 @@
+const Modal = {
+    toggleTaskModal() {
+        taskModal.classList.toggle('hidden')
+        addTaskButton.classList.toggle('hidden')
+
+        taskMenuModal.classList.add('hidden')
+        noteInput.classList.add('hidden')
+        addNoteButton.classList.remove('hidden')
+
+        form.clearFields()
+    },
+
+    toggleTaskMenuModal() {
+        taskMenuModal.classList.toggle('hidden')
+
+        taskModal.classList.add('hidden')
+
+        form.clearFields()
+    },
+
+    toggleNoteInput() {
+        noteInput.classList.toggle('hidden')
+        addNoteButton.classList.toggle('hidden')
+    }
+}
+
+const form = {
+    tasks: [],
+
+    taskDescriptionInput: document.querySelector('#workingOnInput'),
+
+    actInput: document.querySelector('#actInput'),
+
+    pomodoroQuantityInput: document.querySelector('#quantityPomodoros'),
+
+    noteInput: document.querySelector('#noteInput'),
+
+    getValues() {
+        return {
+            taskDescription: this.taskDescriptionInput.value.trim(),
+            act: this.actInput.value,
+            pomodoroQuantity: this.pomodoroQuantityInput.value,
+            note: this.noteInput.value
+        }
+    },
+
+    clearFields() {
+        this.taskDescriptionInput.value = ''
+        this.actInput.value = '0'
+        this.pomodoroQuantityInput.value = '1'
+        this.noteInput.value = ''
+    },
+
+    submit(event) {
+        event.preventDefault()
+        DOM.clearTaskDisplay()
+
+        this.tasks.push(this.getValues())
+
+        App.reloadTasks()
+
+        Modal.toggleTaskModal()
+        this.clearFields()
+    },
+
+    increasePomodoroQuantityValue() {
+        let newValue = Number(this.pomodoroQuantityInput.value)
+        newValue += 1
+        this.pomodoroQuantityInput.value = newValue.toString()
+    },
+
+    decreasePomodoroQuantityValue() {
+        let newValue = Number(this.pomodoroQuantityInput.value)
+        if (newValue === 1) return
+        newValue -= 1
+        this.pomodoroQuantityInput.value = newValue.toString()
+    }
+}
+
 const timer = {
     getTime() {
         let formattedTime
 
         if (App.time === 0) {
-            timer.resetTimer()
+            App.alarmClockAudio.play()
+            timer.changeTimer()
             return
         }
 
@@ -21,43 +101,72 @@ const timer = {
 
         formattedTime = `${displayMinutes}:${displaySeconds}`
 
-        App.update(formattedTime)
+        App.updateTimer(formattedTime)
     },
 
     startTimer() {
         App.buttonAudio.play()
 
         this.timerInterval = setInterval(this.getTime, 1000)
-        DOM.timerButton.textContent = 'STOP'
+        timerButton.textContent = 'STOP'
 
-        DOM.timerButton.onclick = () => this.stopTimer()
+        timerButton.onclick = () => this.stopTimer()
 
         DOM.skipTimerButton.style.opacity = '1'
-        DOM.timerButton.style.transform = 'translateY(6px)'
-        DOM.timerButton.style.boxShadow = 'none'
+        timerButton.style.transform = 'translateY(6px)'
+        timerButton.style.boxShadow = 'none'
     },
 
     stopTimer() {
         App.buttonAudio.play()
 
         clearInterval(this.timerInterval)
-        DOM.timerButton.textContent = 'START'
+        timerButton.textContent = 'START'
 
-        DOM.timerButton.onclick = () => this.startTimer()
+        timerButton.onclick = () => this.startTimer()
 
         DOM.skipTimerButton.style.opacity = '0'
-        DOM.timerButton.style.transform = 'translateY(-6px)'
-        DOM.timerButton.style.boxShadow = 'rgb(235 235 235) 0px 6px 0px'
+        timerButton.style.transform = 'translateY(-6px)'
+        timerButton.style.boxShadow = 'rgb(235 235 235) 0px 6px 0px'
+    },
+
+    changeTimer() {
+        // Changes the timer to Pomodoro, Short Break or Long Break
+
+        App.checkTab()
+        switch (true) {
+            case App.pomodoroTabCheck && App.counterLongCheck:
+                App.counter += 1
+                timerOptions.longBreak()
+                break
+
+            case App.pomodoroTabCheck:
+                App.counter += 1
+                timerOptions.shortBreak()
+                break
+
+            case App.shortBreakTabCheck || App.longBreakTabCheck:
+                timerOptions.Pomodoro()
+                break
+        }
     },
 
     resetTimer() {
-        App.alarmClockAudio.play()
+        // Resets the current timer
+        App.checkTab()
+        switch (true) {
+            case App.pomodoroTabCheck:
+                timerOptions.Pomodoro()
+                break
 
-        timerOptions.setCurrentTab('Pomodoro')
-        App.currentTab()
+            case App.shortBreakTabCheck:
+                timerOptions.shortBreak()
+                break
 
-        App.counter += 1
-        App.update()
+            case App.longBreakTabCheck:
+                timerOptions.longBreak()
+                break
+        }
     },
 
     skipTimer() {
@@ -68,14 +177,7 @@ const timer = {
                 'Are you sure you want to finish the round early? (The remaining time will not be counted in the report.)'
             )
         ) {
-            if (App.currentTab.name == 'Pomodoro') {
-                App.counter += 1
-                timerOptions.shortBreak()
-                App.update('05:00')
-            } else {
-                timerOptions.Pomodoro()
-                App.update('25:00')
-            }
+            this.changeTimer()
             return
         }
 
@@ -84,160 +186,239 @@ const timer = {
 }
 
 const timerOptions = {
-    // Lembrar de tirar essa função lixo
-    setCurrentTab(tab) {
-        switch (true) {
-            case tab === 'Pomodoro':
-                App.currentTab = this.Pomodoro
-                DOM.pomoOptions[0].classList.add('Pomodoro')
-                DOM.pomoOptions[1].classList.remove('shortBreak')
-                DOM.pomoOptions[2].classList.remove('longBreak')
-                break
+    Pomodoro() {
+        style.setPomodoroStyle()
 
-            case tab === 'shortBreak':
-                App.currentTab = this.shortBreak
-                DOM.pomoOptions[0].classList.remove('Pomodoro')
-                DOM.pomoOptions[1].classList.add('shortBreak')
-                DOM.pomoOptions[2].classList.remove('longBreak')
-                break
+        App.currentTab = 'Pomodoro'
+        App.time = 1000 * 60 * 25
+        App.updateTimer('25:00')
 
-            case tab === 'longBreak':
-                App.currentTab = this.longBreak
-                DOM.pomoOptions[0].classList.remove('Pomodoro')
-                DOM.pomoOptions[1].classList.remove('shortBreak')
-                DOM.pomoOptions[2].classList.add('longBreak')
-                break
-        }
-        // I can't think of something more elegant 😪
+        timer.stopTimer()
     },
 
-    Pomodoro() {
+    shortBreak() {
+        style.setShortBreakStyle()
+
+        App.currentTab = 'shortBreak'
+        App.time = 1000 * 60 * 5
+        App.updateTimer('05:00')
+
         timer.stopTimer()
+    },
 
-        App.time = 1000 * 25 * 60
-        DOM.timerDiv.textContent = '25:00'
+    longBreak() {
+        style.setLongBreakStyle()
 
-        this.setCurrentTab('Pomodoro')
+        App.currentTab = 'longBreak'
+        App.time = 1000 * 60 * 15
+        App.updateTimer('15:00')
 
-        document.body.style.backgroundColor = '#e05454'
+        timer.stopTimer()
+    }
+}
 
+const style = {
+    changingElements: [
+        document.body,
         // NAV
-        DOM.navOptions.forEach(option => {
-            option.style.backgroundColor = '#e06464'
-        })
-
-        DOM.horizontalRules.forEach(hr => {
-            hr.style.borderColor = '#c84c4c'
-        })
-
+        document.querySelector('#rightUl li:nth-child(1) a'),
+        document.querySelector('#rightUl li:nth-child(2) a'),
+        document.querySelector('#rightUl li:nth-child(3) a'),
+        // TABS
+        document.querySelector('#options ul li:nth-child(1)'),
+        document.querySelector('#options ul li:nth-child(2)'),
+        document.querySelector('#options ul li:nth-child(3)'),
+        // HORIZONTAL RULES
+        document.querySelector('body .hr'),
+        document.querySelector('#tasksContainer .hr'),
         // MAIN
-        timerButton.style.color = '#e05454'
-
-        timerContainer.style.backgroundColor = '#e06464'
-
+        document.querySelector('#timerContainer'),
+        document.querySelector('#timerButton'),
         // TASKS
-        menuButton.style.backgroundColor = '#e06464'
+        document.querySelector('#menuButton'),
+        document.querySelector('#addTaskButton'),
+        document.querySelector('#timeToSomething')
+    ],
 
-        addTaskButton.style.backgroundColor = '#c84c4c'
+    setPomodoroStyle() {
+        this.changingElements.forEach(element => {
+            element.classList.remove(`${App.currentTab}`)
+            element.classList.add('Pomodoro')
+        })
 
         timeToSomething.textContent = 'Time to focus!'
     },
 
-    shortBreak() {
-        DOM.timerDiv.textContent = '05:00'
-        App.time = 1000 * 60 * 5
-        this.setCurrentTab('shortBreak')
-
-        timer.stopTimer()
-
-        document.body.style.backgroundColor = '#4c9195'
-
-        // NAV
-        DOM.navOptions.forEach(option => {
-            option.style.backgroundColor = '#609ca4'
+    setShortBreakStyle() {
+        this.changingElements.forEach(element => {
+            element.classList.remove(`${App.currentTab}`)
+            element.classList.add('shortBreak')
         })
 
-        DOM.horizontalRules.forEach(hr => {
-            hr.style.borderColor = '#458488'
-        })
-
-        // MAIN
-        timerButton.style.color = '#58848c'
-
-        // #58848c active button
-
-        timerContainer.style.backgroundColor = '#609ca4'
-
-        // TASKS
-        menuButton.style.backgroundColor = '#609ca4'
-
-        addTaskButton.style.backgroundColor = '#458488'
-
-        // TEXT
         timeToSomething.textContent = 'Time for a break!'
     },
 
-    longBreak() {
-        DOM.timerDiv.textContent = '15:00'
-        App.time = 1000 * 60 * 15
-
-        this.setCurrentTab('longBreak')
-
-        timer.stopTimer()
-
-        document.body.style.backgroundColor = '#487ca4'
-
-        // NAV
-        DOM.navOptions.forEach(option => {
-            option.style.backgroundColor = '#608cac'
+    setLongBreakStyle() {
+        this.changingElements.forEach(element => {
+            element.classList.remove(`${App.currentTab}`)
+            element.classList.add('longBreak')
         })
-
-        DOM.horizontalRules.forEach(option => {
-            option.style.borderColor = '#407494'
-        })
-
-        // Main
-        timerButton.style.color = '#4b7592'
-
-        //active button #4b7592
-
-        timerContainer.style.backgroundColor = '#608cac'
-
-        // Tasks
-        menuButton.style.backgroundColor = '#608cac'
-
-        addTaskButton.style.backgroundColor = '#407494'
-
-        // TEXT
-        timeToSomething.textContent = 'Time for a break!'
     }
 }
 
 const DOM = {
-    navOptions: document.querySelectorAll('#rightUl li a'),
-    pomoOptions: document.querySelectorAll('#options ul li'),
-    horizontalRules: document.querySelectorAll('.hr'),
-
     timerDiv: document.querySelector('#timer'),
-    timerButton: document.querySelector('#timerButton'),
-    skipTimerButton: document.querySelector('.skipTimerButton')
+    skipTimerButton: document.querySelector('.skipTimerButton'),
+
+    createTask(object) {
+        let innerHtml
+
+        if (object.note === '') {
+            innerHtml = `
+        <div id="taskTextContainer">
+                        <img src="./assets/icon.png" alt="icon" />
+                        <span>${object.taskDescription}</span>
+                        
+                        <div>
+                            <span>${object.act}</span>
+                            <span>/</span>
+                            <span>${object.pomodoroQuantity}</span>
+                    
+                            <a href="#">
+                                <img
+                                    src="./assets/vertical-ellipsis.png"
+                                    alt="Three dots"
+                                />
+                            </a>
+                        </div>
+                    </div>`
+        } else {
+            innerHtml = `
+        <div id="taskTextContainer">
+                        <img src="./assets/icon.png" alt="icon" />
+                        <span>${object.taskDescription}</span>
+                        
+                        <div>
+                            <span>${object.act}</span>
+                            <span>/</span>
+                            <span>${object.pomodoroQuantity}</span>
+                    
+                            <a href="#">
+                                <img
+                                    src="./assets/vertical-ellipsis.png"
+                                    alt="Three dots"
+                                />
+                            </a>
+                        </div>
+                    </div>
+                    <div id="taskNote">
+                    ${object.note}
+                    </div>`
+        }
+
+        return innerHtml
+    },
+
+    insertTask(taskElement) {
+        let div = document.createElement('div')
+        let addTaskButton = document.querySelector('#addTaskButton')
+
+        div.classList.add('task')
+        div.innerHTML = taskElement
+
+        tasksContainer.insertBefore(div, addTaskButton)
+    },
+
+    clearTaskDisplay() {
+        let tasks = document.querySelectorAll('.task')
+        tasks.forEach(task => {
+            task.remove()
+        })
+    },
+
+    clearAllTasks() {
+        form.tasks = []
+        this.clearTaskDisplay()
+    },
+
+    deleteFiishedTasks() {}
 }
 
 const App = {
     init() {
+        // BASIC TIMER INFO
         this.time = 1000 * 60 * 25
         this.counter = 1
-        this.currentTab = timerOptions.Pomodoro
 
-        DOM.timerButton.onclick = () => timer.startTimer()
+        this.currentTab = 'Pomodoro'
+        style.setPomodoroStyle()
 
-        this.alarmClockAudio = new Audio('./assets/alarm_clock.mp3')
-        this.buttonAudio = new Audio('./assets/clickMinecraft.mp3')
+        this.addEventListeners()
+        this.setAudios()
     },
 
-    update(currentTime) {
+    updateTimer(currentTime) {
         DOM.timerDiv.textContent = currentTime
         counter.textContent = `#${this.counter}`
+    },
+
+    reloadTasks() {
+        form.tasks.forEach(task => {
+            DOM.insertTask(DOM.createTask(task))
+        })
+    },
+
+    checkTab() {
+        // This function is to update/check the app's current tab
+        // variables used in changeTimer() and resetTimer()
+
+        this.pomodoroTabCheck = this.currentTab === 'Pomodoro' ? true : false
+
+        this.shortBreakTabCheck =
+            this.currentTab === 'shortBreak' ? true : false
+
+        this.longBreakTabCheck = this.currentTab === 'longBreak' ? true : false
+
+        this.counterLongCheck = (this.counter + 1) % 4 === 0 ? true : false
+    },
+
+    addEventListeners() {
+        // TIMER
+        timerButton.onclick = () => timer.startTimer()
+        DOM.skipTimerButton.onclick = () => timer.skipTimer()
+
+        // TABS
+        pomodoroTab.onclick = () => timerOptions.Pomodoro()
+        shortBreakTab.onclick = () => timerOptions.shortBreak()
+        longBreakTab.onclick = () => timerOptions.longBreak()
+
+        // BUTTONS
+        menuButton.onclick = () => Modal.toggleTaskMenuModal()
+        addTaskButton.onclick = () => Modal.toggleTaskModal()
+        cancelButton.onclick = () => Modal.toggleTaskModal()
+
+        increaseQuantity.onclick = () => form.increasePomodoroQuantityValue()
+
+        decreaseQuantity.onclick = () => form.decreasePomodoroQuantityValue()
+
+        addNoteButton.onclick = () => Modal.toggleNoteInput()
+
+        // TASK MODAL BUTTONS
+        clearAllTasks.onclick = () => DOM.clearAllTasks()
+        clearFinishedTasks.onclick = () => null
+        resetCounter.onclick = () => {
+            this.counter = 1
+            counter.textContent = `#${this.counter}`
+        }
+
+        resetTimer.onclick = () => {
+            timer.resetTimer()
+        }
+    },
+
+    setAudios() {
+        this.alarmClockAudio = new Audio('./assets/alarm_clock.mp3')
+        this.buttonAudio = new Audio('./assets/clickMinecraft.mp3')
     }
 }
 
