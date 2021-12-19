@@ -226,7 +226,7 @@ ul {
     font-weight: bold;
 }
 
-#taskTextContainer {
+.taskTextContainer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -236,7 +236,7 @@ ul {
     overflow-wrap: break-word;
 }
 
-#taskTextContainer span {
+.taskTextContainer span {
     width: 90%;
 
     text-align: start;
@@ -244,46 +244,67 @@ ul {
     overflow: hidden;
 }
 
-#taskTextContainer img {
-    width: 60px;
-    height: 40px;
-}
-
-#taskTextContainer div {
+.taskTextContainer div:nth-child(3) {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.4rem;
 }
 
-#taskTextContainer div span {
+.taskTextContainer div span {
     opacity: 0.4;
 }
 
-#taskTextContainer div span:nth-child(3) {
+.taskTextContainer div span:nth-child(3) {
     font-size: 14px;
 }
 
-#taskTextContainer div a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* FINISHED TASKS */
+.markFinishedTaskButton {
+    width: 30px;
+    height: 25px;
 
-    border: 1px solid rgb(223, 223, 223);
-    border-radius: 4px;
+    display: inline-block;
 
-    padding: 0.25rem;
+    border: 2px solid rgb(223, 223, 223);
+    border-radius: 50%;
 
-    margin-left: 0.25rem;
+    background-color: rgb(223, 223, 223);
+
+    margin-right: 10px;
+
+    cursor: pointer;
 }
 
-#taskTextContainer div a:hover {
-    background-color: #dfdfdf;
+.markFinishedTaskButton::after {
+    display: block;
+
+    width: 7px;
+    height: 12px;
+
+    content: '';
+
+    margin-left: 6px;
+    margin-top: 0px;
+
+    border-style: solid;
+    border-color: rgb(255, 255, 255);
+    border-image: initial;
+    border-width: 0px 3px 3px 0px;
+
+    transform: rotate(45deg);
 }
 
-#taskTextContainer div a img {
-    width: 18px;
-    height: 18px;
+.markFinishedTaskButton.finished {
+    border: 2px solid rgb(217, 85, 80);
+
+    background-color: rgb(217, 85, 80);
+}
+
+.task.finished .taskDescription {
+    text-decoration: line-through;
+
+    opacity: 0.4;
 }
 
 #taskNote {

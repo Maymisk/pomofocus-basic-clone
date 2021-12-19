@@ -7,7 +7,7 @@ const Modal = {
         noteInput.classList.add('hidden')
         addNoteButton.classList.remove('hidden')
 
-        form.clearFields()
+        task.clearFields()
     },
 
     toggleTaskMenuModal() {
@@ -15,7 +15,7 @@ const Modal = {
 
         taskModal.classList.add('hidden')
 
-        form.clearFields()
+        task.clearFields()
     },
 
     toggleNoteInput() {
@@ -24,8 +24,20 @@ const Modal = {
     }
 }
 
-const form = {
-    tasks: [],
+const lStorage = {
+    get() {
+        return JSON.parse(localStorage.getItem('pomofocus:tasks')) || []
+    },
+
+    set(tasks) {
+        localStorage.setItem('pomofocus:tasks', JSON.stringify(tasks))
+    }
+}
+
+const task = {
+    // For task and task form management
+
+    tasks: lStorage.get(),
 
     taskDescriptionInput: document.querySelector('#workingOnInput'),
 
@@ -40,7 +52,8 @@ const form = {
             taskDescription: this.taskDescriptionInput.value.trim(),
             act: this.actInput.value,
             pomodoroQuantity: this.pomodoroQuantityInput.value,
-            note: this.noteInput.value
+            note: this.noteInput.value,
+            finished: false
         }
     },
 
@@ -56,11 +69,28 @@ const form = {
         DOM.clearTaskDisplay()
 
         this.tasks.push(this.getValues())
-
-        App.reloadTasks()
+        this.reloadTasks()
 
         Modal.toggleTaskModal()
         this.clearFields()
+    },
+
+    toggleFinished(index) {
+        let taskElements = document.querySelectorAll(`#tasksContainer div.task`)
+
+        let finishedTaskElement = taskElements[index]
+        let markFinishedTaskButton = finishedTaskElement.querySelector(
+            '.markFinishedTaskButton'
+        )
+
+        finishedTaskElement.classList.toggle('finished')
+        markFinishedTaskButton.classList.toggle('finished')
+
+        if (finishedTaskElement.classList.contains('finished')) {
+            task.tasks[index].finished = true
+        } else {
+            task.tasks[index].finished = false
+        }
     },
 
     increasePomodoroQuantityValue() {
@@ -74,6 +104,14 @@ const form = {
         if (newValue === 1) return
         newValue -= 1
         this.pomodoroQuantityInput.value = newValue.toString()
+    },
+
+    reloadTasks() {
+        DOM.clearTaskDisplay()
+        task.tasks.forEach((task, index) => {
+            DOM.insertTask(DOM.createTask(task, index))
+        })
+        lStorage.set(task.tasks)
     }
 }
 
@@ -137,16 +175,16 @@ const timer = {
         switch (true) {
             case App.pomodoroTabCheck && App.counterLongCheck:
                 App.counter += 1
-                timerOptions.longBreak()
+                App.longBreak()
                 break
 
             case App.pomodoroTabCheck:
                 App.counter += 1
-                timerOptions.shortBreak()
+                App.shortBreak()
                 break
 
             case App.shortBreakTabCheck || App.longBreakTabCheck:
-                timerOptions.Pomodoro()
+                App.Pomodoro()
                 break
         }
     },
@@ -156,15 +194,15 @@ const timer = {
         App.checkTab()
         switch (true) {
             case App.pomodoroTabCheck:
-                timerOptions.Pomodoro()
+                App.Pomodoro()
                 break
 
             case App.shortBreakTabCheck:
-                timerOptions.shortBreak()
+                App.shortBreak()
                 break
 
             case App.longBreakTabCheck:
-                timerOptions.longBreak()
+                App.longBreak()
                 break
         }
     },
@@ -182,38 +220,6 @@ const timer = {
         }
 
         this.startTimer()
-    }
-}
-
-const timerOptions = {
-    Pomodoro() {
-        style.setPomodoroStyle()
-
-        App.currentTab = 'Pomodoro'
-        App.time = 1000 * 60 * 25
-        App.updateTimer('25:00')
-
-        timer.stopTimer()
-    },
-
-    shortBreak() {
-        style.setShortBreakStyle()
-
-        App.currentTab = 'shortBreak'
-        App.time = 1000 * 60 * 5
-        App.updateTimer('05:00')
-
-        timer.stopTimer()
-    },
-
-    longBreak() {
-        style.setLongBreakStyle()
-
-        App.currentTab = 'longBreak'
-        App.time = 1000 * 60 * 15
-        App.updateTimer('15:00')
-
-        timer.stopTimer()
     }
 }
 
@@ -267,64 +273,93 @@ const style = {
 }
 
 const DOM = {
+    // For major changes in the dom
+
     timerDiv: document.querySelector('#timer'),
     skipTimerButton: document.querySelector('.skipTimerButton'),
 
-    createTask(object) {
+    createTask(object, index) {
         let innerHtml
+        let finished = object.finished
 
-        if (object.note === '') {
-            innerHtml = `
-        <div id="taskTextContainer">
-                        <img src="./assets/icon.png" alt="icon" />
-                        <span>${object.taskDescription}</span>
+        // What's the ideal structure to do this type of huge decision? please tell me 😭
+        switch (true) {
+            case object.note === '' && finished === true:
+                console.log('penis')
+                innerHtml = `
+                    <div class="taskTextContainer">
+                        <div onclick="task.toggleFinished(${index})" class="markFinishedTaskButton finished"></div>
+                        <span class="taskDescription">${object.taskDescription}</span>
                         
                         <div>
                             <span>${object.act}</span>
                             <span>/</span>
                             <span>${object.pomodoroQuantity}</span>
-                    
-                            <a href="#">
-                                <img
-                                    src="./assets/vertical-ellipsis.png"
-                                    alt="Three dots"
-                                />
-                            </a>
                         </div>
                     </div>`
-        } else {
-            innerHtml = `
-        <div id="taskTextContainer">
-                        <img src="./assets/icon.png" alt="icon" />
-                        <span>${object.taskDescription}</span>
+                break
+
+            case object.note != '' && finished === true:
+                innerHtml = `
+                    <div class="taskTextContainer">
+                        <div onclick="task.toggleFinished(${index})" class="markFinishedTaskButton finished"></div>
+                        <span class="taskDescription">${object.taskDescription}</span>
                         
                         <div>
                             <span>${object.act}</span>
                             <span>/</span>
                             <span>${object.pomodoroQuantity}</span>
-                    
-                            <a href="#">
-                                <img
-                                    src="./assets/vertical-ellipsis.png"
-                                    alt="Three dots"
-                                />
-                            </a>
                         </div>
                     </div>
                     <div id="taskNote">
                     ${object.note}
                     </div>`
+                break
+
+            case object.note != '':
+                innerHtml = `
+                    <div class="taskTextContainer">
+                        <div onclick="task.toggleFinished(${index})" class="markFinishedTaskButton"></div>
+                        <span class="taskDescription">${object.taskDescription}</span>
+                        
+                        <div>
+                            <span>${object.act}</span>
+                            <span>/</span>
+                            <span>${object.pomodoroQuantity}</span>
+                        </div>
+                    </div>
+                    <div id="taskNote">
+                    ${object.note}
+                    </div>`
+                break
+
+            default:
+                innerHtml = `
+                    <div class="taskTextContainer">
+                        <div onclick="task.toggleFinished(${index})" class="markFinishedTaskButton"></div>
+                        <span class="taskDescription">${object.taskDescription}</span>
+                        
+                        <div>
+                            <span>${object.act}</span>
+                            <span>/</span>
+                            <span>${object.pomodoroQuantity}</span>
+                        </div>
+                    </div>`
+                break
         }
 
-        return innerHtml
+        return { innerHtml, finished }
     },
 
-    insertTask(taskElement) {
+    insertTask(htmlData) {
         let div = document.createElement('div')
         let addTaskButton = document.querySelector('#addTaskButton')
 
         div.classList.add('task')
-        div.innerHTML = taskElement
+        div.innerHTML = htmlData.innerHtml
+        if (htmlData.finished) {
+            div.classList.add('finished')
+        }
 
         tasksContainer.insertBefore(div, addTaskButton)
     },
@@ -337,11 +372,19 @@ const DOM = {
     },
 
     clearAllTasks() {
-        form.tasks = []
-        this.clearTaskDisplay()
+        task.tasks = []
+        task.reloadTasks()
     },
 
-    deleteFiishedTasks() {}
+    clearFinishedTasks() {
+        for (let i = task.tasks.length - 1; i >= 0; i--) {
+            if (task.tasks[i].finished === true) {
+                task.tasks.splice(i, 1)
+            }
+        }
+
+        task.reloadTasks()
+    }
 }
 
 const App = {
@@ -355,17 +398,43 @@ const App = {
 
         this.addEventListeners()
         this.setAudios()
+
+        task.reloadTasks()
+    },
+
+    Pomodoro() {
+        style.setPomodoroStyle()
+
+        this.currentTab = 'Pomodoro'
+        this.time = 1000 * 60 * 25
+        this.updateTimer('25:00')
+
+        timer.stopTimer()
+    },
+
+    shortBreak() {
+        style.setShortBreakStyle()
+
+        this.currentTab = 'shortBreak'
+        this.time = 1000 * 60 * 5
+        this.updateTimer('05:00')
+
+        timer.stopTimer()
+    },
+
+    longBreak() {
+        style.setLongBreakStyle()
+
+        this.currentTab = 'longBreak'
+        this.time = 1000 * 60 * 15
+        this.updateTimer('15:00')
+
+        timer.stopTimer()
     },
 
     updateTimer(currentTime) {
         DOM.timerDiv.textContent = currentTime
         counter.textContent = `#${this.counter}`
-    },
-
-    reloadTasks() {
-        form.tasks.forEach(task => {
-            DOM.insertTask(DOM.createTask(task))
-        })
     },
 
     checkTab() {
@@ -388,24 +457,24 @@ const App = {
         DOM.skipTimerButton.onclick = () => timer.skipTimer()
 
         // TABS
-        pomodoroTab.onclick = () => timerOptions.Pomodoro()
-        shortBreakTab.onclick = () => timerOptions.shortBreak()
-        longBreakTab.onclick = () => timerOptions.longBreak()
+        pomodoroTab.onclick = () => this.Pomodoro()
+        shortBreakTab.onclick = () => this.shortBreak()
+        longBreakTab.onclick = () => this.longBreak()
 
         // BUTTONS
         menuButton.onclick = () => Modal.toggleTaskMenuModal()
         addTaskButton.onclick = () => Modal.toggleTaskModal()
         cancelButton.onclick = () => Modal.toggleTaskModal()
 
-        increaseQuantity.onclick = () => form.increasePomodoroQuantityValue()
+        increaseQuantity.onclick = () => task.increasePomodoroQuantityValue()
 
-        decreaseQuantity.onclick = () => form.decreasePomodoroQuantityValue()
+        decreaseQuantity.onclick = () => task.decreasePomodoroQuantityValue()
 
         addNoteButton.onclick = () => Modal.toggleNoteInput()
 
         // TASK MODAL BUTTONS
         clearAllTasks.onclick = () => DOM.clearAllTasks()
-        clearFinishedTasks.onclick = () => null
+        clearFinishedTasks.onclick = () => DOM.clearFinishedTasks()
         resetCounter.onclick = () => {
             this.counter = 1
             counter.textContent = `#${this.counter}`
