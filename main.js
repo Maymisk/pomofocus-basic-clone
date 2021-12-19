@@ -285,7 +285,6 @@ const DOM = {
         // What's the ideal structure to do this type of huge decision? please tell me 😭
         switch (true) {
             case object.note === '' && finished === true:
-                console.log('penis')
                 innerHtml = `
                     <div class="taskTextContainer">
                         <div onclick="task.toggleFinished(${index})" class="markFinishedTaskButton finished"></div>
