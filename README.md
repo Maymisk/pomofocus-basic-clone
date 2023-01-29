@@ -40,8 +40,9 @@ Then, just open the index.html file in your web browser!
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
+<img align="left" width="300px" src="/.github/assets/screenshot-1.png?raw=true" />
+<img align="left" width="300px" src="/.github/assets/screenshot-2.png?raw=true" />
+<img width="300px" src="/.github/assets/screenshot-3.png?raw=true" />
 
 ## Improvements
 
