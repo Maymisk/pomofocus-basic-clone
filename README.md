@@ -40,9 +40,9 @@ Then, just open the index.html file in your web browser!
 
 ## Screenshots
 
-<img align="left" width="300px" src="/.github/assets/screenshot-1.png?raw=true" />
-<img align="left" width="300px" src="/.github/assets/screenshot-2.png?raw=true" />
-<img width="300px" src="/.github/assets/screenshot-3.png?raw=true" />
+<img align="left" width="200px" src="/.github/assets/screenshot-1.png?raw=true" />
+<img align="left" width="200px" src="/.github/assets/screenshot-2.png?raw=true" />
+<img width="200px" src="/.github/assets/screenshot-3.png?raw=true" />
 
 ## Improvements
 
