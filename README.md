@@ -20,9 +20,8 @@ That said, the code for the entire application is in ***3 files***, and despite 
 
 
 ```bash
-  git clone https://github.com/Maymisk/pomofocus-basic-clone.git
-  
-  # no dependencies, this was hardcore
+git clone https://github.com/Maymisk/pomofocus-basic-clone.git
+# no dependencies, this was hardcore
 ```
 Then, just open the index.html file in your web browser!
 
