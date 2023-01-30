@@ -2,21 +2,28 @@
   <img src="https://res.cloudinary.com/practicaldev/image/fetch/s--OFGKwu86--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_66%2Cw_880/https://miro.medium.com/max/1400/1%2AZB91m3uEJ51nPNBCwSrpkA.gif" />
 </p>
 
-# Pomofocus Clone
+# 🍅 Pomofocus Clone
 
 This is a clone of the [**pomofocus webapp**](https://pomofocus.io), which helps its users to keep track of their study time, following the [**pomodoro technique**](https://en.wikipedia.org/wiki/Pomodoro_Technique).
 
+<br />
 
+<p align="center">
+  <a href="#-installation">Installation</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#-functionalities">Functionalities</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#-screenshots">Screenshots</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="#-improvements">Improvements</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</p>
 
-## My journey
+## 🚶‍♂️ My journey
 
-**This clone was the first project I made all by myself.** Back in the day, all I knew was pure HTML, CSS and JS, so that's what I used to build it. It most definitely contributed to developing my logical skills and strengthening my web development fundamentals. *(it also made me feel like quitting, since coding imperatively was not fun 💀).*
+**This clone was the first project I made all by myself.** Back in the day, **all I knew was pure HTML, CSS and JS, so that's what I used to build it.** It most definitely contributed to developing my logical skills and strengthening my web development fundamentals. *(it also made me feel like quitting, since coding imperatively was not fun 💀).*
 
 That said, the code for the entire application is in ***3 files***, and despite the obvious architectural flaws, I am very proud of the outcome I managed to achieve back then.
 
 
 
-## Installation
+## 💻 Installation
 
 
 ```bash
@@ -25,7 +32,7 @@ git clone https://github.com/Maymisk/pomofocus-basic-clone.git
 ```
 Then, just open the index.html file in your web browser!
 
-## Functionalities
+## ✅ Functionalities
 
 - Task creation, checking and deletion
 - 3 different timers:
@@ -37,13 +44,13 @@ Then, just open the index.html file in your web browser!
 
 
 
-## Screenshots
+## 📷 Screenshots
 
 <img align="left" width="250px" src="/.github/assets/screenshot-1.png?raw=true" />
 <img align="left" width="250px" src="/.github/assets/screenshot-2.png?raw=true" />
 <img width="250px" src="/.github/assets/screenshot-3.png?raw=true" />
 
-## Improvements
+## 🔧 Improvements
 
 - Give life to the navbar buttons - so far there are no settings, as well as no login and no reporting functionalities;
 
