@@ -17,7 +17,7 @@ This is a clone of the [**pomofocus webapp**](https://pomofocus.io), which helps
 
 ## 🚶‍♂️ My journey
 
-**This clone was the first project I made all by myself.** Back in the day, **all I knew was pure HTML, CSS and JS, so that's what I used to build it.** It most definitely contributed to developing my logical skills and strengthening my web development fundamentals. *(it also made me feel like quitting, since coding imperatively was not fun 💀).*
+**This clone was the first project I made all by myself.** Back in the day, **all I knew was pure HTML, CSS and JS, so that's what I used to build it.** It most definitely contributed to developing my logical skills and strengthening my web development fundamentals.
 
 That said, the code for the entire application is in ***3 files***, and despite the obvious architectural flaws, I am very proud of the outcome I managed to achieve back then.
 
@@ -49,18 +49,6 @@ Then, just open the index.html file in your web browser!
 <img align="left" width="250px" src="/.github/assets/screenshot-1.png?raw=true" />
 <img align="left" width="250px" src="/.github/assets/screenshot-2.png?raw=true" />
 <img width="250px" src="/.github/assets/screenshot-3.png?raw=true" />
-
-## 🔧 Improvements
-
-- Give life to the navbar buttons - so far there are no settings, as well as no login and no reporting functionalities;
-
-- Finish the task related functionalities;
-
-- Make the modal accessible;
-
-- Make the application responsive so the layout doesn't break on smaller screen sizes;
-
-- The code should be distributed accross many more files 💀💀.
 
 ---
 
