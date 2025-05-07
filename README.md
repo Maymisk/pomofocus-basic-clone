@@ -12,7 +12,6 @@ This is a clone of the [**pomofocus webapp**](https://pomofocus.io), which helps
   <a href="#-installation">Installation</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="#-functionalities">Functionalities</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <a href="#-screenshots">Screenshots</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="#-improvements">Improvements</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </p>
 
 ## 🚶‍♂️ My journey
